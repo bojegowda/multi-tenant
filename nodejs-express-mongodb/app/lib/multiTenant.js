@@ -3,10 +3,6 @@ const {
 } = require('mongoose')
 const mongoose = require('mongoose');
 
-const {
-    getCurrentTenantId,
-} = require('./storage')
-
 /**
 Function will return another function, which will further return a mongoose discriminator.
 The only difference here is that everytime you use the mongoose model, you will have to call a function,
@@ -28,9 +24,9 @@ exports.tenantModel = function (name, schema, options) {
         // getCurrentTenantId() is a function will returns current tenant
         // this function uses continuation-local-storage npm package
 
-        const tenantId = getCurrentTenantId()
+        const tenantId = "";
 
-        console.log(tenantId);
+        // console.log(tenantId);
 
         // if no tenant or you want to skip tenant specific descrimintor, return actual model
         if (!tenantId || skipTenant) return Model

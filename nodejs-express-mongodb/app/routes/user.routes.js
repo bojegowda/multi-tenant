@@ -6,11 +6,9 @@ module.exports = app => {
     var router = require("express").Router();
 
     // Create a new User
-
-
-
-
     app.post('/api/users/create', users.create);
     app.post("/api/users/authenticate", users.authenticate);
-    app.post('/api/organizations/create', organizations.create)
+    app.get("/api/users/getUsers", users.getUsers);
+    app.post('/api/organizations/create', organizations.create);
+    app.get('/api/organizations/getOrganizations', organizations.getOrganizations);
 };

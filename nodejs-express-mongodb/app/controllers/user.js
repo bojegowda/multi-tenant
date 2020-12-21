@@ -1,12 +1,15 @@
-const db = require("../models");
-const User = db.users;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require("../config/auth.config");
 
-// Create and Save a new user
+
+
+var getNamespace = require('continuation-local-storage').getNamespace;
+var session = getNamespace('mySession');
 exports.create = (req, res) => {
     // Validate request
+
+    const User = require("../models/user")(session.get('tenant'))
     if (!req.body.userName) {
         res.status(400).send({
             message: "userName can not be empty!"
@@ -20,10 +23,6 @@ exports.create = (req, res) => {
         email
     } = req.body;
 
-    console.log(User);
-
-
-
     // Create a Tutorial
     const user = new User({
         userName: userName,
@@ -31,8 +30,10 @@ exports.create = (req, res) => {
         email: email,
         password: bcrypt.hashSync(req.body.password, 8),
         userId: +new Date(),
+        date_added: new Date()
 
     });
+
 
     // Save Tutorial in the database
     user.save(user)
@@ -91,3 +92,61 @@ exports.authenticate = (req, res) => {
             });
         });
 };
+
+exports.getUsers = async function (req, res) {
+
+
+    try {
+        let {
+            limit,
+            page,
+
+        } = req.query;
+
+        let users = await User.find().skip(+page > 0 ? ((page - 1) * +limit) : 0)
+            .limit(+limit)
+        let totalCount = await User.find().count()
+        if (users) {
+            res.status(200).send({
+                message: ' users found Successfully',
+                status: 'ok',
+                users: users,
+                totCount: totalCount
+            })
+        } else {
+            res.status(204).send({
+                message: 'No users found',
+                status: 'ok',
+            })
+        }
+
+    } catch (err) {
+        next(err)
+    }
+};
+
+exports.updateUser = async function (req, res, next) {
+    try {
+        let detilsofUser = await user.findByIdAndUpdate(req.body._id, {
+            $set: {
+                "email": req.body.email,
+                "fullName": req.body.fullName,
+
+            }
+        })
+
+        if (detilsofUser) {
+            res.status(200).send({
+                status: 'success',
+                message: "User updated successfully"
+
+            })
+        } else {
+            res.status(204).send({
+                status: 'sorry',
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+}

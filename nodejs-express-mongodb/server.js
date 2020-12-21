@@ -25,17 +25,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bindCurrentNamespace);
 app.use((req, res, next) => {
-    console.log(req.body);
-    // Get current user from session or token
-    // const user = req.user
-    const id = req.body.tenantId
-    console.log(id);
-
-    // Get current tenant from user here
-    // Make sure its a string
-    const tenantId = id
-
-    setCurrentTenantId(id, tenantId);
+    // console.log(req.body);
     next();
 });
 
